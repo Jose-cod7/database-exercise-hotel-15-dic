@@ -1,0 +1,7 @@
+git init
+git add .
+git commit -m "mensaje del commit"
+-> Vamos al github y creamos un repositorio
+-> Nos copiamos el link del repositorio
+git remote add origin https://github.com/EduardBargues/20201215_migracode.git
+git push --set-upstream origin master
