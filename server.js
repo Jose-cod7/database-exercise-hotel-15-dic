@@ -53,7 +53,10 @@ const getCustomersById = (request, response) => {
 }
 
 const getCostumerBookingsId = (request, response) => {
-    const customersId = request.params.customerId
+    const customersId = request.params.customerId;
+
+    pool
+        .query("")
 }
 
 /* Add a new GET endpoint /customers/:customerId/bookings to load all the bookings of a specific customer. Returns the following information: check in date, number of nights, hotel name, hotel postcode. */
