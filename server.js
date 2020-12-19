@@ -54,12 +54,12 @@ const getCustomersById = (request, response) => {
 
 const getCostumerBookingsId = (request, response) => {
     const customersId = request.params.customerId;
-
     pool
-        .query("")
+    .query(`SELECT bookings.checkin_date, bookings.nights, hotels.name, hotels.postcode FROM bookings INNER JOIN hotels ON hotels.id = bookings.hotel_id WHERE bookings.customer_id = $1`, [customersId])
+        .then((result) => response.json(result.rows))
+        .catch((e) => console.error(e));
 }
 
-/* Add a new GET endpoint /customers/:customerId/bookings to load all the bookings of a specific customer. Returns the following information: check in date, number of nights, hotel name, hotel postcode. */
 
 const postHotel = (request, response) => {
     const newHotelName = request.body.name;
@@ -99,7 +99,7 @@ const postCustomer = (request, response) => {
 
 const updateCustomerEmail = (request, response) => {
     const customerId = request.params.customerId;
-    const newEmail = request.body.email;
+    const {newEmail, newAddress }= request.body;
     
     
             if (newEmail === "") {
@@ -156,6 +156,7 @@ app.get("/hotels", getHotels)
 app.get("/hotels/:hotelsId", getHotelsId);
 app.get("/customers", getCustomersByName);
 app.get("/customers/:customerId", getCustomersById);
+app.get("/customers/:customerId/bookings", getCostumerBookingsId);
 app.use(bodyParser.json());
 app.post("/hotels", postHotel);
 app.post("/customers", postCustomer);
