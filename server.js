@@ -53,8 +53,10 @@ const getCustomersById = (request, response) => {
 }
 
 const getCostumerBookingsId = (request, response) => {
-
+    const customersId = request.params.customerId
 }
+
+/* Add a new GET endpoint /customers/:customerId/bookings to load all the bookings of a specific customer. Returns the following information: check in date, number of nights, hotel name, hotel postcode. */
 
 const postHotel = (request, response) => {
     const newHotelName = request.body.name;
@@ -124,6 +126,27 @@ const deleteCustomer = (req, res) => {
         .catch((e) => console.error(e));
 };
 
+const deleteHotel = (req, res) => {
+    const hotelId = req.params.hotelId;
+        /*pool
+            .query("SELECT *  FROM bookings WHERE id=$1", [hotelId])
+            .then((result) => {
+                if (result.rows.length > 0) {
+                    return res
+                    .status (400)
+                    .send ("A hotel with bookings can't be deleted");
+             } else {*/
+     pool
+        .query("DELETE FROM bookings WHERE hotel_id=$1", [hotelId])
+        .then(() => {           
+     pool
+        .query("DELETE FROM hotels WHERE id=$1", [hotelId])
+        .then(() => res.send(`Hotel ${hotelId} deleted!`))
+        .catch((e) => console.error(e));
+        })
+        .catch((e) => console.error(e));
+};
+
 
 // ENDPOINTS
 app.get("/hotels", getHotels)
@@ -131,8 +154,9 @@ app.get("/hotels/:hotelsId", getHotelsId);
 app.get("/customers", getCustomersByName);
 app.get("/customers/:customerId", getCustomersById);
 app.use(bodyParser.json());
-app.post("/hotels", postHotel)
-app.post("/customers", postCustomer)
-app.put("/customers/:customerId", updateCustomerEmail)
-app.delete("/customers/:customerId", deleteCustomer)
+app.post("/hotels", postHotel);
+app.post("/customers", postCustomer);
+app.put("/customers/:customerId", updateCustomerEmail);
+app.delete("/customers/:customerId", deleteCustomer);
+app.delete("/hotels/:hotelId", deleteHotel);
 app.listen(port, () => console.log(`Server is listening on port ${port}.`))
