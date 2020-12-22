@@ -97,12 +97,50 @@ const postCustomer = (request, response) => {
     });
 };
 
-const updateCustomerEmail = (request, response) => {
-    const customerId = request.params.customerId;
-    const {newEmail, newAddress }= request.body;
+const updateCustomerEmail = (req, res) => {
+    const customerId = req.params.customerId;
+    const {
+        email,
+        address,
+        city,
+        postcode,
+        country
+    } = req.body;
+
+    pool
+        .query("select * from customers WHERE id=$1", [customerId])
+        .then(result => {
+            if (result.rows.length === 0) {
+                res.status(404).send(`Customer with id=${customerId} not found`)
+            } else {
+                let c = result.rows[0]
+                if (email) {
+                    c.email = email
+                }
+                if (address) {
+                    c.address = address
+                }
+                if (city) {
+                    c.city = city
+                }
+                if (postcode) {
+                    c.postcode = postcode
+                }
+                if (country) {
+                    c.country = country
+                }
+
+                pool.query('update customers set name=$1, email=$2, address=$3, city=$4, postcode=$5, country=$6 where id=$7',
+                        [c.name, c.email, c.address, c.city, c.postcode, c.country, customerId])
+                    .then(() => res.send(`Customer ${customerId} updated!`))
+                    .catch((e) => console.error(e));
+            }
+        })
+        .catch((e) => console.error(e));
+}
     
     
-            if (newEmail === "") {
+            /*if (newEmail === "") {
                 return response
                 .status (400)
                 .send ("You must enter an email");
@@ -113,21 +151,21 @@ const updateCustomerEmail = (request, response) => {
         .then(() => response.send(`Customer ${customerId} email updated!`))
         .catch((e) => console.error(e));
         }  
-    };
+    };*/
 
 
-const deleteCustomer = (req, res) => {
-    const customerId = req.params.customerId;
+function deleteCustomer(req, res) {
+    const customerId = req.params.customerId
     pool
         .query("DELETE FROM bookings WHERE customer_id=$1", [customerId])
         .then(() => {
             pool
                 .query("DELETE FROM customers WHERE id=$1", [customerId])
                 .then(() => res.send(`Customer ${customerId} deleted!`))
-                .catch((e) => console.error(e));
+                .catch((e) => console.error(e))
         })
-        .catch((e) => console.error(e));
-};
+        .catch((e) => console.error(e))
+}
 
 const deleteHotel = (req, res) => {
     const hotelId = req.params.hotelId;
