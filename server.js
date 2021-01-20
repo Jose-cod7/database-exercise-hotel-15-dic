@@ -83,6 +83,7 @@ const postCustomer = (request, response) => {
     pool
         .query("SELECT *  FROM customers WHERE name=$1", [name])
         .then((result) => {
+            console.log(result)
           if (result.rows.length > 0) {
               return response
               .status (400)

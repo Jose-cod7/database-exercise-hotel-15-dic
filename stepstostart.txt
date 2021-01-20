@@ -3,5 +3,5 @@ $ npm init
 fill server.js
 $ npm i --save express
 $ npm i --save pg
-$ npm --save pg
+$ npm i --save body-parser
 $ npm i --save-dev nodemon
